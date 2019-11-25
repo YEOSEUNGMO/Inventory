@@ -14,4 +14,14 @@ class YEO_INVENOTRY_API APickUp : public AInteractable
 {
 	GENERATED_BODY()
 	
+public:
+	APickUp();
+
+protected:
+
+	UPROPERTY(EditAnywhere)
+		UStaticMeshComponent* PickupMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FName ItemID;
 };

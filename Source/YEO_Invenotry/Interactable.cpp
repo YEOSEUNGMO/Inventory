@@ -6,8 +6,8 @@
 // Sets default values
 AInteractable::AInteractable()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	Name = "Name not set";
+	Action = "Iteract";
 
 }
 
@@ -17,11 +17,11 @@ void AInteractable::BeginPlay()
 	Super::BeginPlay();
 	
 }
-
-// Called every frame
-void AInteractable::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
+//
+//// Called every frame
+//void AInteractable::Tick(float DeltaTime)
+//{
+//	Super::Tick(DeltaTime);
+//
+//}
 

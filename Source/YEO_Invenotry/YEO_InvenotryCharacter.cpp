@@ -8,6 +8,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Interactable.h"
+#include "GamePlayController.h"
 #include "Engine.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -57,10 +59,6 @@ void AYEO_InvenotryCharacter::SetupPlayerInputComponent(class UInputComponent* P
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-	PlayerInputComponent->BindAction("PickUp", IE_Pressed, this, &AYEO_InvenotryCharacter::BeginPickUp);
-	PlayerInputComponent->BindAction("PickUp", IE_Released, this, &AYEO_InvenotryCharacter::EndPickUp);
-
-	PlayerInputComponent->BindAction("ShowInventory", IE_Pressed, this, &AYEO_InvenotryCharacter::ShowInventory);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AYEO_InvenotryCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AYEO_InvenotryCharacter::MoveRight);
@@ -81,7 +79,38 @@ void AYEO_InvenotryCharacter::SetupPlayerInputComponent(class UInputComponent* P
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AYEO_InvenotryCharacter::OnResetVR);
 }
 
+void AYEO_InvenotryCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
 
+	CheckForInteractables();
+}
+
+void AYEO_InvenotryCharacter::CheckForInteractables()
+{
+
+	FHitResult HitResult;
+
+	FVector StartTrace = FollowCamera->GetComponentLocation();
+	FVector EndTrace = (FollowCamera->GetForwardVector() * 500) + StartTrace;
+
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+
+	AGamePlayController* Controller = Cast<AGamePlayController>(GetController());
+
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_Visibility, QueryParams) && Controller)
+	{
+		if (AInteractable * Interactable = Cast<AInteractable>(HitResult.GetActor()))
+		{
+			Controller->CurrentInteractable = Interactable;
+			return;
+		}
+	}
+
+	Controller->CurrentInteractable = nullptr;
+
+}
 void AYEO_InvenotryCharacter::OnResetVR()
 {
 	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
@@ -151,10 +180,5 @@ void AYEO_InvenotryCharacter::EndPickUp()
 
 void AYEO_InvenotryCharacter::ShowInventory()
 {
-	for (auto& Item : Inventory)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, FString::Printf(TEXT("Items : %s"),*Item));
-	}
 	
-
 }

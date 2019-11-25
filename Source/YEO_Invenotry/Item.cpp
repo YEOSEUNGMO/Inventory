@@ -32,9 +32,7 @@ void AItem::BeginPlay()
 
 void AItem::Pickup()
 {
-	PlayerController->Inventory.Add(*ItemName);
-	GEngine->AddOnScreenDebugMessage(1, 3.0f, FColor::Green, TEXT("Pick Up!!"));
-	Destroy();
+	
 }
 
 // Called every frame
